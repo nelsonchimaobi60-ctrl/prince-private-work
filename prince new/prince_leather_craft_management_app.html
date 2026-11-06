@@ -1,0 +1,1247 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#171512" />
+  <title>Prince Leather Craft | Sales & Production Management</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#201d19',
+            muted: '#827b70',
+            gold: '#bd9253',
+            'gold-light': '#e7d4b4',
+            paper: '#f7f5f1',
+            line: '#e9e4dc',
+            darkbg: '#171512',
+            darkcard: '#201b16',
+          },
+          fontFamily: {
+            sans: ['"DM Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --ink: #201d19;
+      --muted: #827b70;
+      --gold: #bd9253;
+      --gold-light: #e7d4b4;
+      --paper: #f7f5f1;
+      --line: #e9e4dc;
+      --shadow: 0 12px 35px rgba(32, 29, 25, 0.06);
+    }
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 9999px;
+      padding: 0.25rem 0.625rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+    .status-completed, .status-paid, .status-collected {
+      background-color: #e8f3ed;
+      color: #34745a;
+    }
+    .status-in-production {
+      background-color: #f8f0df;
+      color: #987342;
+    }
+    .status-pending, .status-awaiting-deposit {
+      background-color: #f5eae8;
+      color: #a34f45;
+    }
+    .status-ready-for-collection {
+      background-color: #e9eef7;
+      color: #526b94;
+    }
+    /* Custom Modal Backdrops */
+    dialog::backdrop {
+      background: rgba(23, 21, 18, 0.7);
+      backdrop-filter: blur(3px);
+    }
+    .sidebar-active {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border-left: 3px solid #bd9253;
+    }
+  </style>
+</head>
+<body class="min-h-screen antialiased flex flex-col">
+
+  <!-- ================= AUTH SHELL ================= -->
+  <div id="authContainer" class="min-h-screen w-full flex flex-col justify-center items-center p-4 sm:p-6 bg-[radial-gradient(circle_at_20%_15%,#3c3024_0,#201b16_38%,#141210_100%)] text-white">
+    <div class="text-center mb-6">
+      <div class="w-16 h-16 border border-gold text-gold-light flex items-center justify-center mx-auto mb-4 font-serif text-2xl tracking-widest rounded-lg shadow-lg">
+        PLC
+      </div>
+      <p class="text-[10px] tracking-[0.25em] font-bold text-gold uppercase mb-1">Footwear • Craft • Quality</p>
+      <h1 class="text-3xl sm:text-4xl font-serif font-bold tracking-tight">Prince Leather Craft</h1>
+      <p class="text-xs text-[#b7afa3] mt-1">Sales & Production Management</p>
+    </div>
+
+    <!-- Auth Card -->
+    <div class="w-full max-w-md bg-white text-ink rounded-xl p-6 sm:p-8 shadow-2xl border border-[#3a332a]/20">
+      
+      <!-- Tab Switcher -->
+      <div class="flex border-b border-line mb-6">
+        <button id="tabSignIn" class="w-1/2 py-2 text-center font-serif font-bold text-lg border-b-2 border-gold text-ink transition-colors">
+          Sign In
+        </button>
+        <button id="tabSignUp" class="w-1/2 py-2 text-center font-serif font-semibold text-lg border-b-2 border-transparent text-muted hover:text-ink transition-colors">
+          Register / Sign Up
+        </button>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="signInForm" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider mb-1 text-ink">Email Address</label>
+          <input type="email" id="signInEmail" required placeholder="owner@princeleather.com" class="w-full px-3 py-2.5 border border-line rounded-lg focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider mb-1 text-ink">Password</label>
+          <input type="password" id="signInPassword" required placeholder="••••••••" class="w-full px-3 py-2.5 border border-line rounded-lg focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold text-sm">
+        </div>
+        <button type="submit" class="w-full py-3 bg-[#28231d] hover:bg-[#3c342c] text-white font-semibold rounded-lg text-sm transition shadow-md">
+          Sign In to Workspace
+        </button>
+      </form>
+
+      <!-- Register / Sign Up Form -->
+      <form id="signUpForm" class="space-y-4 hidden">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider mb-1 text-ink">Full Name</label>
+          <input type="text" id="signUpName" required placeholder="e.g. Segun Prince" class="w-full px-3 py-2.5 border border-line rounded-lg focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider mb-1 text-ink">Email Address</label>
+          <input type="email" id="signUpEmail" required placeholder="staff@princeleather.com" class="w-full px-3 py-2.5 border border-line rounded-lg focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider mb-1 text-ink">Role</label>
+          <select id="signUpRole" class="w-full px-3 py-2.5 border border-line rounded-lg focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold text-sm bg-white">
+            <option value="admin">Administrator (Owner / Director)</option>
+            <option value="manager">Manager</option>
+            <option value="sales">Sales Staff</option>
+            <option value="production">Production Staff</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider mb-1 text-ink">Create Password</label>
+          <input type="password" id="signUpPassword" required minlength="6" placeholder="At least 6 characters" class="w-full px-3 py-2.5 border border-line rounded-lg focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold text-sm">
+        </div>
+        <button type="submit" class="w-full py-3 bg-gold hover:bg-[#a67d43] text-white font-semibold rounded-lg text-sm transition shadow-md">
+          Create Account & Access
+        </button>
+      </form>
+
+      <!-- Error / Notice Message -->
+      <div id="authError" class="mt-4 text-xs text-red-600 font-medium text-center min-h-[1rem]"></div>
+
+      <div class="mt-6 pt-4 border-t border-line text-center">
+        <p class="text-[11px] text-muted leading-relaxed">
+          Default Admin demo: <span class="font-mono text-ink">admin@princeleather.com</span> / <span class="font-mono text-ink">admin123</span>
+        </p>
+      </div>
+    </div>
+    <p class="text-[10px] tracking-widest text-[#a79c8d] mt-6">PRIVATE BUSINESS WORKSPACE • NIGERIAN NAIRA (₦)</p>
+  </div>
+
+
+  <!-- ================= MAIN APP WORKSPACE ================= -->
+  <div id="appContainer" class="hidden min-h-screen flex flex-col md:flex-row">
+    
+    <!-- Sidebar -->
+    <aside class="w-full md:w-64 bg-[#201d19] text-white flex-shrink-0 flex flex-col justify-between border-r border-[#342f28]">
+      <div>
+        <!-- Brand Title -->
+        <div class="p-5 flex items-center gap-3 border-b border-[#ffffff15]">
+          <div class="w-10 h-10 border border-gold text-gold-light flex items-center justify-center font-serif text-sm font-bold rounded">
+            PLC
+          </div>
+          <div>
+            <strong class="block font-serif tracking-wider text-sm">PRINCE LEATHER</strong>
+            <span class="block text-[9px] text-[#b4a99a] tracking-widest">CRAFT & SALES</span>
+          </div>
+        </div>
+
+        <div class="px-5 py-3 text-[10px] tracking-widest text-[#8f867b] font-bold">NAVIGATION</div>
+
+        <!-- Links -->
+        <nav class="space-y-1 px-3">
+          <button data-page="dashboard" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#c9c1b7] hover:bg-[#ffffff10] hover:text-white transition sidebar-active">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 text-gold"></i> Overview
+          </button>
+          <button data-page="orders" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#c9c1b7] hover:bg-[#ffffff10] hover:text-white transition">
+            <i data-lucide="shopping-bag" class="w-4 h-4 text-gold"></i> Shoe Orders
+          </button>
+          <button data-page="customers" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#c9c1b7] hover:bg-[#ffffff10] hover:text-white transition">
+            <i data-lucide="users" class="w-4 h-4 text-gold"></i> Customers
+          </button>
+          <button data-page="production" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#c9c1b7] hover:bg-[#ffffff10] hover:text-white transition">
+            <i data-lucide="hammer" class="w-4 h-4 text-gold"></i> Workshop Tracker
+          </button>
+          <button data-page="payments" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#c9c1b7] hover:bg-[#ffffff10] hover:text-white transition">
+            <i data-lucide="banknote" class="w-4 h-4 text-gold"></i> Payments & Balances
+          </button>
+          <button data-page="reports" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#c9c1b7] hover:bg-[#ffffff10] hover:text-white transition">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 text-gold"></i> Reports & Export
+          </button>
+          <button data-page="staff" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#c9c1b7] hover:bg-[#ffffff10] hover:text-white transition">
+            <i data-lucide="shield-check" class="w-4 h-4 text-gold"></i> Staff Access
+          </button>
+        </nav>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="p-4 border-t border-[#ffffff15] text-xs flex items-center justify-between text-[#b9b0a5]">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Online</span>
+        </div>
+        <button id="logoutBtn" class="text-gold-light hover:underline font-semibold flex items-center gap-1">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Body -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      
+      <!-- Top Bar -->
+      <header class="bg-white border-b border-line px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sticky top-0 z-10">
+        <div>
+          <p id="topDateLabel" class="text-[10px] tracking-widest font-bold text-gold uppercase">TODAY'S WORKSPACE</p>
+          <h2 id="pageTitle" class="font-serif text-2xl font-bold text-ink">Overview</h2>
+        </div>
+        <div class="flex items-center gap-3 self-end sm:self-auto">
+          <div class="w-9 h-9 bg-[#eee5d7] text-[#765a35] rounded-full flex items-center justify-center font-bold text-sm shadow-inner" id="userAvatar">
+            P
+          </div>
+          <div class="text-left">
+            <strong id="userName" class="block text-xs font-bold text-ink">Staff User</strong>
+            <span id="userRole" class="block text-[10px] text-muted capitalize">Administrator</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dynamic Page Container -->
+      <div id="pageContent" class="p-6 max-w-7xl w-full mx-auto space-y-6">
+        <!-- Rendered via JS -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Component -->
+  <dialog id="appModal" class="rounded-xl p-0 w-full max-w-xl bg-white shadow-2xl border border-line">
+    <form id="modalForm" method="dialog" class="p-6">
+      <div class="flex justify-between items-start mb-4 pb-3 border-b border-line">
+        <div>
+          <p class="text-[9px] tracking-widest font-bold text-gold uppercase">PRINCE LEATHER CRAFT</p>
+          <h3 id="modalTitle" class="font-serif text-xl font-bold text-ink">Form Action</h3>
+        </div>
+        <button type="button" id="closeModalBtn" class="w-8 h-8 rounded-full bg-paper flex items-center justify-center text-muted hover:text-ink">
+          &times;
+        </button>
+      </div>
+
+      <!-- Dynamic Form Fields -->
+      <div id="modalFields" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left"></div>
+
+      <!-- Errors in modal -->
+      <p id="modalError" class="text-xs text-red-600 font-medium mt-3"></p>
+
+      <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-line">
+        <button type="button" id="cancelModalBtn" class="px-4 py-2 text-xs font-semibold text-ink border border-line rounded-lg hover:bg-paper">
+          Cancel
+        </button>
+        <button type="submit" id="saveModalBtn" class="px-5 py-2 text-xs font-semibold text-white bg-ink rounded-lg hover:bg-[#383129] shadow">
+          Save Record
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-[#24211d] text-white px-4 py-3 rounded-lg shadow-xl text-xs flex items-center gap-2 transform translate-y-10 opacity-0 transition-all pointer-events-none z-50">
+    <i data-lucide="check-circle" class="w-4 h-4 text-gold"></i>
+    <span id="toastMsg">Action completed successfully</span>
+  </div>
+
+  <!-- APPLICATION JAVASCRIPT -->
+  <script>
+    // --- Application State & Storage Setup ---
+    const STORAGE_KEY_USER = "plc_current_user_v2";
+    const STORAGE_KEY_CUSTOMERS = "plc_customers_data";
+    const STORAGE_KEY_ORDERS = "plc_orders_data";
+    const STORAGE_KEY_STAFF = "plc_staff_accounts";
+
+    // Initial Default Seed Data
+    const defaultStaff = [
+      { id: "usr_admin", name: "Segun Prince (Owner)", email: "admin@princeleather.com", pass: "admin123", role: "admin" },
+      { id: "usr_sales1", name: "Chioma Okoro", email: "sales@princeleather.com", pass: "sales123", role: "sales" },
+      { id: "usr_prod1", name: "Ibrahim Musa", email: "craft@princeleather.com", pass: "craft123", role: "production" }
+    ];
+
+    const defaultCustomers = [
+      { id: "cust_1", name: "Chief Emeka Nnamdi", phone: "08031234567", email: "emeka@nnamdi.ng", address: "Victoria Island, Lagos" },
+      { id: "cust_2", name: "Mrs. Folake Adebayo", phone: "08059876543", email: "folake@gmail.com", address: "Ikeja GRA, Lagos" }
+    ];
+
+    const defaultOrders = [
+      {
+        id: "ord_101",
+        orderNo: "PLC-8812",
+        customerId: "cust_1",
+        customerName: "Chief Emeka Nnamdi",
+        customerPhone: "08031234567",
+        shoeType: "Classic Leather Senator Loafers",
+        size: "44",
+        colour: "Deep Mahogany",
+        quantity: 2,
+        unitPrice: 45000,
+        total: 90000,
+        deposit: 50000,
+        paid: 50000,
+        salesDate: new Date().toISOString().slice(0, 10),
+        productionDate: new Date().toISOString().slice(0, 10),
+        collectionDate: new Date(Date.now() + 86400000 * 7).toISOString().slice(0, 10),
+        status: "in-production",
+        notes: "Soft inner sole lining required",
+        payments: [{ amount: 50000, date: new Date().toISOString().slice(0, 10), method: "Bank transfer", note: "Initial deposit" }]
+      },
+      {
+        id: "ord_102",
+        orderNo: "PLC-8813",
+        customerId: "cust_2",
+        customerName: "Mrs. Folake Adebayo",
+        customerPhone: "08059876543",
+        shoeType: "Bespoke Monks Strap Shoes",
+        size: "39",
+        colour: "Black Calfskin",
+        quantity: 1,
+        unitPrice: 65000,
+        total: 65000,
+        deposit: 65000,
+        paid: 65000,
+        salesDate: new Date(Date.now() - 86400000 * 3).toISOString().slice(0, 10),
+        productionDate: new Date(Date.now() - 86400000 * 2).toISOString().slice(0, 10),
+        collectionDate: new Date(Date.now() + 86400000 * 2).toISOString().slice(0, 10),
+        status: "ready-for-collection",
+        notes: "Gold buckle accent",
+        payments: [{ amount: 65000, date: new Date(Date.now() - 86400000 * 3).toISOString().slice(0, 10), method: "POS", note: "Full payment" }]
+      }
+    ];
+
+    // Load from localStorage or set default
+    function getStored(key, fallback) {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : fallback;
+    }
+    function setStored(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    let staffList = getStored(STORAGE_KEY_STAFF, defaultStaff);
+    let customerList = getStored(STORAGE_KEY_CUSTOMERS, defaultCustomers);
+    let orderList = getStored(STORAGE_KEY_ORDERS, defaultOrders);
+    let currentUser = getStored(STORAGE_KEY_USER, null);
+    let activePage = "dashboard";
+    let modalActionCallback = null;
+
+    // Helpers
+    const money = n => new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(Number(n) || 0);
+    const amountDue = o => Math.max(0, Number(o.total || 0) - Number(o.paid || 0));
+    const escapeHtml = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const roleTitle = r => ({ admin: "Administrator", manager: "Manager", sales: "Sales Staff", production: "Production Staff" }[r] || "Staff");
+
+    function toast(msg) {
+      const t = document.getElementById("toast");
+      document.getElementById("toastMsg").textContent = msg;
+      t.classList.remove("translate-y-10", "opacity-0");
+      setTimeout(() => t.classList.add("translate-y-10", "opacity-0"), 3000);
+    }
+
+    // --- Authentication Logic ---
+    function initAuthUI() {
+      const authContainer = document.getElementById("authContainer");
+      const appContainer = document.getElementById("appContainer");
+
+      if (currentUser) {
+        authContainer.classList.add("hidden");
+        appContainer.classList.remove("hidden");
+        document.getElementById("userName").textContent = currentUser.name;
+        document.getElementById("userRole").textContent = roleTitle(currentUser.role);
+        document.getElementById("userAvatar").textContent = currentUser.name.charAt(0).toUpperCase();
+        document.getElementById("topDateLabel").textContent = new Date().toLocaleDateString("en-NG", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+        // Hide administrative links for non-admins
+        document.querySelectorAll('.nav-btn[data-page="staff"]').forEach(el => {
+          if (currentUser.role !== "admin") el.classList.add("hidden");
+          else el.classList.remove("hidden");
+        });
+
+        renderPage();
+      } else {
+        authContainer.classList.remove("hidden");
+        appContainer.classList.add("hidden");
+      }
+      lucide.createIcons();
+    }
+
+    // Sign In / Register Tab Toggle
+    document.getElementById("tabSignIn").addEventListener("click", () => {
+      document.getElementById("signInForm").classList.remove("hidden");
+      document.getElementById("signUpForm").classList.add("hidden");
+      document.getElementById("tabSignIn").className = "w-1/2 py-2 text-center font-serif font-bold text-lg border-b-2 border-gold text-ink transition-colors";
+      document.getElementById("tabSignUp").className = "w-1/2 py-2 text-center font-serif font-semibold text-lg border-b-2 border-transparent text-muted hover:text-ink transition-colors";
+      document.getElementById("authError").textContent = "";
+    });
+
+    document.getElementById("tabSignUp").addEventListener("click", () => {
+      document.getElementById("signUpForm").classList.remove("hidden");
+      document.getElementById("signInForm").classList.add("hidden");
+      document.getElementById("tabSignUp").className = "w-1/2 py-2 text-center font-serif font-bold text-lg border-b-2 border-gold text-ink transition-colors";
+      document.getElementById("tabSignIn").className = "w-1/2 py-2 text-center font-serif font-semibold text-lg border-b-2 border-transparent text-muted hover:text-ink transition-colors";
+      document.getElementById("authError").textContent = "";
+    });
+
+    // Handle Login Submit
+    document.getElementById("signInForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("signInEmail").value.trim().toLowerCase();
+      const pass = document.getElementById("signInPassword").value;
+      const err = document.getElementById("authError");
+
+      const user = staffList.find(s => s.email.toLowerCase() === email && s.pass === pass);
+      if (user) {
+        currentUser = user;
+        setStored(STORAGE_KEY_USER, currentUser);
+        err.textContent = "";
+        initAuthUI();
+        toast(`Welcome back, ${currentUser.name}!`);
+      } else {
+        err.textContent = "Invalid email or password. Please check your credentials.";
+      }
+    });
+
+    // Handle Registration Submit
+    document.getElementById("signUpForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("signUpName").value.trim();
+      const email = document.getElementById("signUpEmail").value.trim().toLowerCase();
+      const role = document.getElementById("signUpRole").value;
+      const pass = document.getElementById("signUpPassword").value;
+      const err = document.getElementById("authError");
+
+      if (staffList.some(s => s.email.toLowerCase() === email)) {
+        err.textContent = "An account with this email address already exists.";
+        return;
+      }
+
+      const newStaff = { id: "usr_" + Date.now(), name, email, pass, role };
+      staffList.push(newStaff);
+      setStored(STORAGE_KEY_STAFF, staffList);
+
+      currentUser = newStaff;
+      setStored(STORAGE_KEY_USER, currentUser);
+      err.textContent = "";
+      initAuthUI();
+      toast("Account registered successfully! Logged in.");
+    });
+
+    // Sign Out
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      currentUser = null;
+      localStorage.removeItem(STORAGE_KEY_USER);
+      initAuthUI();
+      toast("Signed out of workspace.");
+    });
+
+    // Navigation Switches
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("sidebar-active"));
+        btn.classList.add("sidebar-active");
+        activePage = btn.dataset.page;
+        renderPage();
+      });
+    });
+
+    // --- Page Rendering Engine ---
+    function renderPage() {
+      const container = document.getElementById("pageContent");
+      const titleEl = document.getElementById("pageTitle");
+
+      const pageTitles = {
+        dashboard: "Overview",
+        orders: "Shoe Orders",
+        customers: "Customer Records",
+        production: "Workshop Production Tracker",
+        payments: "Payments & Balances",
+        reports: "Business Reports",
+        staff: "Staff Access & Roles"
+      };
+
+      titleEl.textContent = pageTitles[activePage] || "Workspace";
+
+      if (activePage === "dashboard") renderDashboard(container);
+      else if (activePage === "orders") renderOrders(container);
+      else if (activePage === "customers") renderCustomers(container);
+      else if (activePage === "production") renderProduction(container);
+      else if (activePage === "payments") renderPayments(container);
+      else if (activePage === "reports") renderReports(container);
+      else if (activePage === "staff") renderStaff(container);
+
+      lucide.createIcons();
+    }
+
+    // --- Page 1: Dashboard ---
+    function renderDashboard(c) {
+      const totalRevenue = orderList.reduce((acc, o) => acc + Number(o.paid || 0), 0);
+      const totalOutstanding = orderList.reduce((acc, o) => acc + amountDue(o), 0);
+      const activeOrders = orderList.filter(o => !["completed", "collected"].includes(o.status)).length;
+      
+      const currentMonth = new Date().toISOString().slice(0, 7);
+      const monthSales = orderList.filter(o => (o.salesDate || "").startsWith(currentMonth)).reduce((a, o) => a + Number(o.total || 0), 0);
+
+      c.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white p-5 rounded-xl border border-line shadow-sm">
+            <div class="flex justify-between items-center text-muted text-xs">
+              <span>Payments Received</span>
+              <div class="w-8 h-8 rounded-lg bg-[#f5eee3] text-gold flex items-center justify-center font-bold">₦</div>
+            </div>
+            <div class="text-2xl font-serif font-bold text-ink mt-3">${money(totalRevenue)}</div>
+            <span class="text-[10px] text-muted">Total cash collected</span>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-line shadow-sm">
+            <div class="flex justify-between items-center text-muted text-xs">
+              <span>Outstanding Balance</span>
+              <div class="w-8 h-8 rounded-lg bg-[#f5eee3] text-gold flex items-center justify-center font-bold">◷</div>
+            </div>
+            <div class="text-2xl font-serif font-bold text-ink mt-3">${money(totalOutstanding)}</div>
+            <span class="text-[10px] text-muted">Customer debts pending</span>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-line shadow-sm">
+            <div class="flex justify-between items-center text-muted text-xs">
+              <span>Active Orders</span>
+              <div class="w-8 h-8 rounded-lg bg-[#f5eee3] text-gold flex items-center justify-center font-bold">⚒</div>
+            </div>
+            <div class="text-2xl font-serif font-bold text-ink mt-3">${activeOrders}</div>
+            <span class="text-[10px] text-muted">In workshop / pending</span>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-line shadow-sm">
+            <div class="flex justify-between items-center text-muted text-xs">
+              <span>This Month's Sales</span>
+              <div class="w-8 h-8 rounded-lg bg-[#f5eee3] text-gold flex items-center justify-center font-bold">↗</div>
+            </div>
+            <div class="text-2xl font-serif font-bold text-ink mt-3">${money(monthSales)}</div>
+            <span class="text-[10px] text-muted">Value of new orders</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+          <div class="lg:col-span-2 bg-white rounded-xl border border-line shadow-sm p-5">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-serif font-bold text-lg text-ink">Recent Orders</h3>
+              <button onclick="openOrderModal()" class="px-3 py-1.5 bg-ink text-white rounded-lg text-xs font-semibold hover:bg-[#383129] flex items-center gap-1">
+                + New Order
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr class="bg-paper text-muted uppercase text-[9px] tracking-wider border-b border-line">
+                    <th class="p-3">Order Code</th>
+                    <th class="p-3">Customer</th>
+                    <th class="p-3">Shoe</th>
+                    <th class="p-3">Total</th>
+                    <th class="p-3">Balance</th>
+                    <th class="p-3">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line">
+                  ${orderList.length ? orderList.slice(0, 5).map(o => `
+                    <tr class="hover:bg-paper/50">
+                      <td class="p-3 font-semibold text-ink">${o.orderNo}</td>
+                      <td class="p-3">${escapeHtml(o.customerName)}</td>
+                      <td class="p-3">${escapeHtml(o.shoeType)}</td>
+                      <td class="p-3">${money(o.total)}</td>
+                      <td class="p-3 font-semibold">${money(amountDue(o))}</td>
+                      <td class="p-3"><span class="status-badge status-${o.status}">${o.status.replace(/-/g, ' ')}</span></td>
+                    </tr>
+                  `).join('') : `<tr><td colspan="6" class="p-6 text-center text-muted">No orders created yet.</td></tr>`}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-line shadow-sm p-5 space-y-4">
+            <h3 class="font-serif font-bold text-lg text-ink">Quick Actions</h3>
+            <div class="grid grid-cols-1 gap-2">
+              <button onclick="openOrderModal()" class="p-3 border border-line rounded-lg text-left hover:border-gold transition flex items-center gap-3">
+                <div class="w-8 h-8 rounded bg-gold/10 text-gold flex items-center justify-center font-bold">+</div>
+                <div>
+                  <strong class="block text-xs text-ink">Create New Order</strong>
+                  <span class="text-[10px] text-muted">Register customer footwear order</span>
+                </div>
+              </button>
+              <button onclick="openCustomerModal()" class="p-3 border border-line rounded-lg text-left hover:border-gold transition flex items-center gap-3">
+                <div class="w-8 h-8 rounded bg-gold/10 text-gold flex items-center justify-center font-bold">👤</div>
+                <div>
+                  <strong class="block text-xs text-ink">Add New Customer</strong>
+                  <span class="text-[10px] text-muted">Save client contact & address</span>
+                </div>
+              </button>
+              <button onclick="openPaymentModal(orderList[0])" class="p-3 border border-line rounded-lg text-left hover:border-gold transition flex items-center gap-3 ${!orderList.length ? 'opacity-50 pointer-events-none' : ''}">
+                <div class="w-8 h-8 rounded bg-gold/10 text-gold flex items-center justify-center font-bold">₦</div>
+                <div>
+                  <strong class="block text-xs text-ink">Record Payment</strong>
+                  <span class="text-[10px] text-muted">Update balance on existing order</span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- Page 2: Orders ---
+    function renderOrders(c) {
+      c.innerHTML = `
+        <div class="bg-white rounded-xl border border-line shadow-sm p-5">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5">
+            <input type="text" id="searchOrdersInput" placeholder="Search order no, customer or shoe..." class="px-3 py-2 border border-line rounded-lg text-xs w-full sm:w-72 focus:outline-none focus:border-gold">
+            <button onclick="openOrderModal()" class="px-4 py-2 bg-ink text-white rounded-lg text-xs font-semibold hover:bg-[#383129] flex items-center gap-1 self-end sm:self-auto">
+              + Create New Order
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-paper text-muted uppercase text-[9px] tracking-wider border-b border-line">
+                  <th class="p-3">Order No</th>
+                  <th class="p-3">Customer</th>
+                  <th class="p-3">Shoe Details</th>
+                  <th class="p-3">Qty</th>
+                  <th class="p-3">Total</th>
+                  <th class="p-3">Paid</th>
+                  <th class="p-3">Balance</th>
+                  <th class="p-3">Status</th>
+                  <th class="p-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody" class="divide-y divide-line">
+                ${orderTableRows(orderList)}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("searchOrdersInput").addEventListener("input", (e) => {
+        const q = e.target.value.toLowerCase();
+        const filtered = orderList.filter(o => [o.orderNo, o.customerName, o.shoeType].join(" ").toLowerCase().includes(q));
+        document.getElementById("ordersTableBody").innerHTML = orderTableRows(filtered);
+      });
+    }
+
+    function orderTableRows(rows) {
+      if (!rows.length) return `<tr><td colspan="9" class="p-6 text-center text-muted">No orders found.</td></tr>`;
+      return rows.map(o => `
+        <tr class="hover:bg-paper/50">
+          <td class="p-3 font-bold text-ink">${o.orderNo}</td>
+          <td class="p-3">${escapeHtml(o.customerName)}</td>
+          <td class="p-3">${escapeHtml(o.shoeType)} ${o.size ? `(Size ${o.size})` : ''}</td>
+          <td class="p-3">${o.quantity}</td>
+          <td class="p-3 font-semibold">${money(o.total)}</td>
+          <td class="p-3 text-emerald-700">${money(o.paid)}</td>
+          <td class="p-3 text-red-700 font-bold">${money(amountDue(o))}</td>
+          <td class="p-3"><span class="status-badge status-${o.status}">${o.status.replace(/-/g, ' ')}</span></td>
+          <td class="p-3 text-right space-x-2">
+            <button onclick='openPaymentModal(${JSON.stringify(o).replace(/'/g, "&#39;")})' class="text-gold font-bold hover:underline">Pay</button>
+            <button onclick='openOrderModal(${JSON.stringify(o).replace(/'/g, "&#39;")})' class="text-ink font-semibold hover:underline">Edit</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // --- Page 3: Customers ---
+    function renderCustomers(c) {
+      c.innerHTML = `
+        <div class="bg-white rounded-xl border border-line shadow-sm p-5">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5">
+            <input type="text" id="searchCustInput" placeholder="Search customer name, phone, email..." class="px-3 py-2 border border-line rounded-lg text-xs w-full sm:w-72 focus:outline-none focus:border-gold">
+            <button onclick="openCustomerModal()" class="px-4 py-2 bg-ink text-white rounded-lg text-xs font-semibold hover:bg-[#383129] flex items-center gap-1">
+              + Add Customer
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-paper text-muted uppercase text-[9px] tracking-wider border-b border-line">
+                  <th class="p-3">Customer Name</th>
+                  <th class="p-3">Phone</th>
+                  <th class="p-3">Email</th>
+                  <th class="p-3">Address</th>
+                  <th class="p-3">Total Orders</th>
+                </tr>
+              </thead>
+              <tbody id="custTableBody" class="divide-y divide-line">
+                ${customerTableRows(customerList)}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("searchCustInput").addEventListener("input", (e) => {
+        const q = e.target.value.toLowerCase();
+        const filtered = customerList.filter(c => [c.name, c.phone, c.email].join(" ").toLowerCase().includes(q));
+        document.getElementById("custTableBody").innerHTML = customerTableRows(filtered);
+      });
+    }
+
+    function customerTableRows(rows) {
+      if (!rows.length) return `<tr><td colspan="5" class="p-6 text-center text-muted">No customers registered yet.</td></tr>`;
+      return rows.map(c => {
+        const count = orderList.filter(o => o.customerId === c.id).length;
+        return `
+          <tr class="hover:bg-paper/50">
+            <td class="p-3 font-bold text-ink">${escapeHtml(c.name)}</td>
+            <td class="p-3">${escapeHtml(c.phone || '—')}</td>
+            <td class="p-3">${escapeHtml(c.email || '—')}</td>
+            <td class="p-3">${escapeHtml(c.address || '—')}</td>
+            <td class="p-3 font-semibold">${count} orders</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // --- Page 4: Workshop Production Tracker ---
+    function renderProduction(c) {
+      const activeProduction = orderList.filter(o => o.status !== "collected");
+      c.innerHTML = `
+        <div class="bg-white rounded-xl border border-line shadow-sm p-5">
+          <p class="text-xs text-muted mb-4">Workshop progress tracking for active orders.</p>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-paper text-muted uppercase text-[9px] tracking-wider border-b border-line">
+                  <th class="p-3">Order No</th>
+                  <th class="p-3">Customer</th>
+                  <th class="p-3">Shoe Item</th>
+                  <th class="p-3">Production Date</th>
+                  <th class="p-3">Expected Collection</th>
+                  <th class="p-3">Current Status</th>
+                  <th class="p-3 text-right">Update Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line">
+                ${activeProduction.length ? activeProduction.map(o => `
+                  <tr class="hover:bg-paper/50">
+                    <td class="p-3 font-bold text-ink">${o.orderNo}</td>
+                    <td class="p-3">${escapeHtml(o.customerName)}</td>
+                    <td class="p-3">${escapeHtml(o.shoeType)}</td>
+                    <td class="p-3">${o.productionDate || 'Not set'}</td>
+                    <td class="p-3 font-semibold">${o.collectionDate || 'Not set'}</td>
+                    <td class="p-3"><span class="status-badge status-${o.status}">${o.status.replace(/-/g, ' ')}</span></td>
+                    <td class="p-3 text-right">
+                      <button onclick='openProductionModal(${JSON.stringify(o).replace(/'/g, "&#39;")})' class="px-3 py-1 bg-gold text-white rounded text-[11px] font-semibold hover:bg-[#a57d42]">
+                        Update Progress
+                      </button>
+                    </td>
+                  </tr>
+                `).join('') : `<tr><td colspan="7" class="p-6 text-center text-muted">No active production tasks.</td></tr>`}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- Page 5: Payments & Balances ---
+    function renderPayments(c) {
+      c.innerHTML = `
+        <div class="bg-white rounded-xl border border-line shadow-sm p-5">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-paper text-muted uppercase text-[9px] tracking-wider border-b border-line">
+                  <th class="p-3">Order No</th>
+                  <th class="p-3">Customer</th>
+                  <th class="p-3">Order Total</th>
+                  <th class="p-3">Amount Paid</th>
+                  <th class="p-3">Remaining Balance</th>
+                  <th class="p-3">Payment Status</th>
+                  <th class="p-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line">
+                ${orderList.map(o => {
+                  const balance = amountDue(o);
+                  return `
+                    <tr class="hover:bg-paper/50">
+                      <td class="p-3 font-bold text-ink">${o.orderNo}</td>
+                      <td class="p-3">${escapeHtml(o.customerName)}</td>
+                      <td class="p-3">${money(o.total)}</td>
+                      <td class="p-3 text-emerald-700 font-medium">${money(o.paid)}</td>
+                      <td class="p-3 text-red-700 font-bold">${money(balance)}</td>
+                      <td class="p-3">
+                        <span class="status-badge ${balance === 0 ? 'status-paid' : 'status-pending'}">
+                          ${balance === 0 ? 'Fully Paid' : 'Balance Due'}
+                        </span>
+                      </td>
+                      <td class="p-3 text-right">
+                        ${balance > 0 ? `
+                          <button onclick='openPaymentModal(${JSON.stringify(o).replace(/'/g, "&#39;")})' class="px-3 py-1 bg-ink text-white rounded text-[11px] font-semibold hover:bg-[#383129]">
+                            + Record Payment
+                          </button>
+                        ` : '<span class="text-muted text-[10px]">Cleared</span>'}
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- Page 6: Reports & CSV Export ---
+    function renderReports(c) {
+      const grandTotal = orderList.reduce((s, o) => s + Number(o.total || 0), 0);
+      const grandPaid = orderList.reduce((s, o) => s + Number(o.paid || 0), 0);
+      const grandBalance = orderList.reduce((s, o) => s + amountDue(o), 0);
+
+      c.innerHTML = `
+        <div class="flex justify-between items-center mb-4">
+          <p class="text-xs text-muted">Summary of orders, cash flow and balances in Naira (₦).</p>
+          <button onclick="exportOrdersCSV()" class="px-4 py-2 bg-gold hover:bg-[#a3793e] text-white rounded-lg text-xs font-semibold flex items-center gap-2 shadow">
+            <i data-lucide="download" class="w-4 h-4"></i> Export Orders to CSV
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-white p-5 rounded-xl border border-line shadow-sm">
+            <span class="text-xs text-muted">Total Order Valuation</span>
+            <div class="text-2xl font-serif font-bold text-ink mt-2">${money(grandTotal)}</div>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-line shadow-sm">
+            <span class="text-xs text-muted">Total Cash Collected</span>
+            <div class="text-2xl font-serif font-bold text-emerald-700 mt-2">${money(grandPaid)}</div>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-line shadow-sm">
+            <span class="text-xs text-muted">Total Outstanding Unpaid</span>
+            <div class="text-2xl font-serif font-bold text-red-700 mt-2">${money(grandBalance)}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function exportOrdersCSV() {
+      const headers = ["Order No", "Customer Name", "Shoe Type", "Size", "Quantity", "Total NGN", "Paid NGN", "Balance NGN", "Status", "Sales Date"];
+      const rows = orderList.map(o => [
+        o.orderNo,
+        o.customerName,
+        o.shoeType,
+        o.size || "",
+        o.quantity,
+        o.total,
+        o.paid,
+        amountDue(o),
+        o.status,
+        o.salesDate || ""
+      ]);
+
+      const csvContent = [headers, ...rows].map(e => e.map(val => `"${String(val).replace(/"/g, '""')}"`).join(",")).join("\n");
+      const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Prince_Leather_Craft_Orders_${new Date().toISOString().slice(0,10)}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast("CSV file downloaded successfully!");
+    }
+
+    // --- Page 7: Staff Access Management ---
+    function renderStaff(c) {
+      if (currentUser.role !== "admin") {
+        c.innerHTML = `<div class="p-6 bg-white rounded-xl text-center text-red-600 text-xs font-semibold">Access Denied: Only Administrators can view or manage staff access.</div>`;
+        return;
+      }
+
+      c.innerHTML = `
+        <div class="bg-white rounded-xl border border-line shadow-sm p-5 space-y-4">
+          <div class="flex justify-between items-center">
+            <h3 class="font-serif font-bold text-lg text-ink">Staff Accounts (${staffList.length})</h3>
+            <button onclick="openStaffModal()" class="px-4 py-2 bg-ink text-white rounded-lg text-xs font-semibold hover:bg-[#383129]">
+              + Add Staff Account
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-paper text-muted uppercase text-[9px] tracking-wider border-b border-line">
+                  <th class="p-3">Staff Name</th>
+                  <th class="p-3">Email Address</th>
+                  <th class="p-3">Role</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line">
+                ${staffList.map(s => `
+                  <tr class="hover:bg-paper/50">
+                    <td class="p-3 font-bold text-ink">${escapeHtml(s.name)}</td>
+                    <td class="p-3">${escapeHtml(s.email)}</td>
+                    <td class="p-3"><span class="px-2 py-1 bg-paper rounded font-semibold text-[10px] text-ink capitalize">${roleTitle(s.role)}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- Modal Handler Framework ---
+    const modal = document.getElementById("appModal");
+    const modalFields = document.getElementById("modalFields");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalError = document.getElementById("modalError");
+
+    function showModal(title, fieldsHtml, onSubmit) {
+      modalTitle.textContent = title;
+      modalFields.innerHTML = fieldsHtml;
+      modalError.textContent = "";
+      modalActionCallback = onSubmit;
+      modal.showModal();
+    }
+
+    function closeModal() {
+      modal.close();
+      modalActionCallback = null;
+    }
+
+    document.getElementById("closeModalBtn").addEventListener("click", closeModal);
+    document.getElementById("cancelModalBtn").addEventListener("click", closeModal);
+
+    document.getElementById("modalForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!modalActionCallback) return;
+      
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+      
+      try {
+        modalActionCallback(data);
+        closeModal();
+        renderPage();
+      } catch (err) {
+        modalError.textContent = err.message || "An error occurred while saving.";
+      }
+    });
+
+    // --- Specific Form Modals ---
+    function openCustomerModal() {
+      const html = `
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-bold mb-1">Customer Full Name *</label>
+          <input type="text" name="name" required placeholder="e.g. Chief Emeka Nnamdi" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">Phone Number *</label>
+          <input type="tel" name="phone" required placeholder="0803XXXXXXX" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">Email Address</label>
+          <input type="email" name="email" placeholder="customer@gmail.com" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-bold mb-1">Delivery / Contact Address</label>
+          <input type="text" name="address" placeholder="Location, City" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+      `;
+
+      showModal("Add New Customer", html, (data) => {
+        const newCust = {
+          id: "cust_" + Date.now(),
+          name: data.name.trim(),
+          phone: data.phone.trim(),
+          email: data.email.trim(),
+          address: data.address.trim()
+        };
+        customerList.push(newCust);
+        setStored(STORAGE_KEY_CUSTOMERS, customerList);
+        toast("Customer record created!");
+      });
+    }
+
+    function openOrderModal(existing = null) {
+      if (!customerList.length) {
+        alert("Please add at least one customer first before creating an order.");
+        openCustomerModal();
+        return;
+      }
+
+      const custOptions = customerList.map(c => `<option value="${c.id}" ${existing?.customerId === c.id ? 'selected' : ''}>${escapeHtml(c.name)} (${c.phone})</option>`).join('');
+
+      const html = `
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-bold mb-1">Select Customer *</label>
+          <select name="customerId" required class="w-full px-3 py-2 border border-line rounded text-xs bg-white">${custOptions}</select>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-bold mb-1">Shoe Type / Design Name *</label>
+          <input type="text" name="shoeType" required value="${existing?.shoeType || ''}" placeholder="e.g. Leather Oxford Shoes" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">Size</label>
+          <input type="text" name="size" value="${existing?.size || ''}" placeholder="e.g. 42" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">Colour</label>
+          <input type="text" name="colour" value="${existing?.colour || ''}" placeholder="e.g. Black / Tan" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">Quantity *</label>
+          <input type="number" id="ordQty" name="quantity" required min="1" value="${existing?.quantity || 1}" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">Unit Price (₦) *</label>
+          <input type="number" id="ordPrice" name="unitPrice" required min="0" value="${existing?.unitPrice || ''}" placeholder="35000" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">Calculated Total Amount (₦)</label>
+          <input type="number" id="ordTotal" name="total" readonly value="${existing?.total || 0}" class="w-full px-3 py-2 border border-line rounded text-xs bg-paper font-bold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">Initial Deposit Paid (₦)</label>
+          <input type="number" name="deposit" min="0" value="${existing?.deposit || 0}" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">Expected Collection Date</label>
+          <input type="date" name="collectionDate" value="${existing?.collectionDate || ''}" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">Initial Status</label>
+          <select name="status" class="w-full px-3 py-2 border border-line rounded text-xs bg-white">
+            <option value="pending" ${existing?.status === 'pending' ? 'selected' : ''}>Pending</option>
+            <option value="in-production" ${existing?.status === 'in-production' ? 'selected' : ''}>In Production</option>
+            <option value="ready-for-collection" ${existing?.status === 'ready-for-collection' ? 'selected' : ''}>Ready For Collection</option>
+            <option value="collected" ${existing?.status === 'collected' ? 'selected' : ''}>Collected</option>
+          </select>
+        </div>
+      `;
+
+      showModal(existing ? "Edit Shoe Order" : "Create New Order", html, (data) => {
+        const cust = customerList.find(c => c.id === data.customerId);
+        const qty = Number(data.quantity);
+        const unitP = Number(data.unitPrice);
+        const total = qty * unitP;
+        const deposit = Number(data.deposit || 0);
+
+        if (deposit > total) throw new Error("Deposit cannot be greater than the total amount.");
+
+        if (existing) {
+          const idx = orderList.findIndex(o => o.id === existing.id);
+          orderList[idx] = {
+            ...orderList[idx],
+            customerId: cust.id,
+            customerName: cust.name,
+            customerPhone: cust.phone,
+            shoeType: data.shoeType,
+            size: data.size,
+            colour: data.colour,
+            quantity: qty,
+            unitPrice: unitP,
+            total: total,
+            deposit: deposit,
+            paid: Math.max(orderList[idx].paid, deposit),
+            collectionDate: data.collectionDate,
+            status: data.status
+          };
+        } else {
+          const newOrder = {
+            id: "ord_" + Date.now(),
+            orderNo: "PLC-" + Math.floor(1000 + Math.random() * 9000),
+            customerId: cust.id,
+            customerName: cust.name,
+            customerPhone: cust.phone,
+            shoeType: data.shoeType,
+            size: data.size,
+            colour: data.colour,
+            quantity: qty,
+            unitPrice: unitP,
+            total: total,
+            deposit: deposit,
+            paid: deposit,
+            salesDate: new Date().toISOString().slice(0, 10),
+            productionDate: new Date().toISOString().slice(0, 10),
+            collectionDate: data.collectionDate,
+            status: data.status || "pending",
+            payments: deposit > 0 ? [{ amount: deposit, date: new Date().toISOString().slice(0, 10), method: "Initial Deposit", note: "" }] : []
+          };
+          orderList.unshift(newOrder);
+        }
+
+        setStored(STORAGE_KEY_ORDERS, orderList);
+        toast("Order saved successfully!");
+      });
+
+      // Auto calculation listeners inside modal
+      const qIn = document.getElementById("ordQty");
+      const pIn = document.getElementById("ordPrice");
+      const tIn = document.getElementById("ordTotal");
+      const calc = () => { tIn.value = (Number(qIn.value || 0) * Number(pIn.value || 0)); };
+      qIn.addEventListener("input", calc);
+      pIn.addEventListener("input", calc);
+    }
+
+    function openPaymentModal(order) {
+      if (!order) return;
+      const balance = amountDue(order);
+
+      const html = `
+        <div class="sm:col-span-2 bg-paper p-3 rounded-lg border border-line text-xs space-y-1 mb-2">
+          <div>Order: <strong class="text-ink">${order.orderNo}</strong> (${escapeHtml(order.shoeType)})</div>
+          <div>Total Amount: <strong>${money(order.total)}</strong> | Already Paid: <strong class="text-emerald-700">${money(order.paid)}</strong></div>
+          <div>Remaining Balance: <strong class="text-red-700">${money(balance)}</strong></div>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-bold mb-1">New Payment Received (₦) *</label>
+          <input type="number" name="amount" required min="1" max="${balance}" value="${balance}" class="w-full px-3 py-2 border border-line rounded text-xs font-bold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">Payment Method</label>
+          <select name="method" class="w-full px-3 py-2 border border-line rounded text-xs bg-white">
+            <option value="Cash">Cash</option>
+            <option value="Bank transfer">Bank Transfer</option>
+            <option value="POS">POS Terminal</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">Payment Date</label>
+          <input type="date" name="date" value="${new Date().toISOString().slice(0, 10)}" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+      `;
+
+      showModal(`Record Payment • ${order.orderNo}`, html, (data) => {
+        const amt = Number(data.amount);
+        if (amt <= 0 || amt > balance) throw new Error("Please enter a valid amount within the balance.");
+
+        const idx = orderList.findIndex(o => o.id === order.id);
+        orderList[idx].paid = Number(orderList[idx].paid || 0) + amt;
+        orderList[idx].payments.push({
+          amount: amt,
+          date: data.date,
+          method: data.method
+        });
+
+        setStored(STORAGE_KEY_ORDERS, orderList);
+        toast(`Payment of ${money(amt)} recorded!`);
+      });
+    }
+
+    function openProductionModal(order) {
+      const html = `
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-bold mb-1">Order Status</label>
+          <select name="status" class="w-full px-3 py-2 border border-line rounded text-xs bg-white">
+            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+            <option value="in-production" ${order.status === 'in-production' ? 'selected' : ''}>In Production</option>
+            <option value="ready-for-collection" ${order.status === 'ready-for-collection' ? 'selected' : ''}>Ready For Collection</option>
+            <option value="collected" ${order.status === 'collected' ? 'selected' : ''}>Collected</option>
+          </select>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-bold mb-1">Expected Collection Date</label>
+          <input type="date" name="collectionDate" value="${order.collectionDate || ''}" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+      `;
+
+      showModal(`Update Workshop Progress • ${order.orderNo}`, html, (data) => {
+        const idx = orderList.findIndex(o => o.id === order.id);
+        orderList[idx].status = data.status;
+        orderList[idx].collectionDate = data.collectionDate;
+        setStored(STORAGE_KEY_ORDERS, orderList);
+        toast("Workshop status updated!");
+      });
+    }
+
+    function openStaffModal() {
+      const html = `
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-bold mb-1">Staff Full Name *</label>
+          <input type="text" name="name" required placeholder="e.g. John Doe" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">Email Address *</label>
+          <input type="email" name="email" required placeholder="staff@princeleather.com" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">Role *</label>
+          <select name="role" class="w-full px-3 py-2 border border-line rounded text-xs bg-white">
+            <option value="sales">Sales Staff</option>
+            <option value="production">Production Staff</option>
+            <option value="manager">Manager</option>
+            <option value="admin">Administrator</option>
+          </select>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-bold mb-1">Temporary Password *</label>
+          <input type="password" name="pass" required minlength="6" placeholder="At least 6 characters" class="w-full px-3 py-2 border border-line rounded text-xs">
+        </div>
+      `;
+
+      showModal("Add Staff Account", html, (data) => {
+        if (staffList.some(s => s.email.toLowerCase() === data.email.toLowerCase())) {
+          throw new Error("A staff member with this email already exists.");
+        }
+        const newMember = {
+          id: "usr_" + Date.now(),
+          name: data.name.trim(),
+          email: data.email.trim().toLowerCase(),
+          role: data.role,
+          pass: data.pass
+        };
+        staffList.push(newMember);
+        setStored(STORAGE_KEY_STAFF, staffList);
+        toast("Staff profile created!");
+      });
+    }
+
+    // --- On Window Load Initialize ---
+    window.addEventListener("DOMContentLoaded", () => {
+      initAuthUI();
+    });
+  </script>
+</body>
+</html>
